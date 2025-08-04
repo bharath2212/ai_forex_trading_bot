@@ -1,23 +1,20 @@
-import yfinance as yf 
-from datetime import datetime, timedelta
+import yfinance as yf
 import pandas as pd
 
-# === Configurable Parameters ===
 symbol = "EURUSD=X"
-interval = "5m"
-filename = "eurusd_hourly.csv"
+start_str = "2025-06-01"
+end_str = "2025-07-31"
+interval = "1h"  # hourly data
 
-start_str = "2025-07-01"
-end_str = "2025-07-03"
+filename = "eurusd_hourly.csv"
 
 df = yf.download(symbol, start=start_str, end=end_str, interval=interval)
 
 if df.empty:
     print("❌ No data returned.")
 else:
+    df = df[["Close"]].copy()
     df.index.name = "Date"
-    df.reset_index(inplace=True)
-    df.to_csv(filename, index=False)
-    print(f"✅ Saved to {filename}")
-    print(f"📅 Date Range: {df['Date'].min()} to {df['Date'].max()}")
-    print(f"📊 Total rows: {len(df)}")
+    df.to_csv(filename)
+    print(f"✅ Saved {len(df)} rows to {filename}")
+    print(f"📅 From {df.index.min()} to {df.index.max()}")
